@@ -1,20 +1,25 @@
-# Use an official Python runtime as a parent image
+# Use older Python version compatible with pyrebase
 FROM python:3.8-slim
 
-# Set the working directory in the container
+# Install necessary system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        python3-dev \
+        musl-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-# Copy only the requirements file first
+# Copy requirements.txt first to leverage Docker layer caching
 COPY requirements.txt .
-
-# Install dependencies (this layer will be cached unless requirements.txt changes)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
+# Copy the rest of the app code
 COPY . .
 
-# Make port 5000 available to the world outside this container
+# Expose port and run app
 EXPOSE 5000
-
-# Run app.py when the container launches
-CMD ["python3", "app/app.py"]
+CMD ["python3", "app.py"]
