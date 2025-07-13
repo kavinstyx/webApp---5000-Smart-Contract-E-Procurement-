@@ -230,4 +230,4 @@ def developers():
 app.secret_key = "helloworld this is satoshi"
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run(host='0.0.0.0', debug=True)
